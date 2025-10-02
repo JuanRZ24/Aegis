@@ -1,34 +1,39 @@
-package CPU
+package cpu
 
-import(
-	"fmt"
-	"github.com/shirou/gopsutil/v3/cpu"
-	"aegis/internal/monitor"
+import (
+    "fmt"
+    "github.com/shirou/gopsutil/v3/cpu"
+    "github.com/JuanRZ24/aegis/internal/monitor"
+    "github.com/JuanRZ24/aegis/internal/ui"
 )
 
-Type CPUMonitor struct {}
+type CPUMonitor struct{}
 
-
-func (c CPUMonitor) Name() string{
-	return "CPU"
+func (c CPUMonitor) Name() string {
+    return "CPU"
 }
 
 func (c CPUMonitor) Collect() monitor.Data {
-	usage, _ := cpu.Percent(0,true)//uso por nucleo
-	metrics := make(map[string]string)
+    usage, _ := cpu.Percent(0, true) // uso por núcleo
+    metrics := make(map[string]string)
 
-	for i, u := range usage {
-		key := fmt.Sprintf("Core %d", i)
-		metrics[key] = fmt.Sprintf("%.2f%%",u)
-	}
+    for i, u := range usage {
+        key := fmt.Sprintf("Core %d", i)
+        metrics[key] = fmt.Sprintf("%.2f%%", u)
+    }
 
-	return monitor.Data{Metrics:metrics}
+    return monitor.Data{Metrics: metrics}
 }
 
-func (c CPUMonitor) Format(data monitor.Data) string{
-	result := "[CPU]\n"
-	for k,v := range data.Metrics{
-		result += fmt.Sprintf(" %s: %s\n",k,v)
-	}
-	return result
+func (c CPUMonitor) Format(data monitor.Data) string {
+    result := "[CPU]\n"
+    for k, v := range data.Metrics {
+        percent := 0.0
+        fmt.Sscanf(v, "%f%%", &percent)
+        bar := ui.ProgressBar(percent, 20)
+		coloredBar := ui.Colorize(bar,percent)
+		coloredVal := ui.Colorize(v, percent)
+        result += fmt.Sprintf("  %s:\t %s\t %s\n", k, coloredVal, coloredBar)
+    }
+    return result
 }

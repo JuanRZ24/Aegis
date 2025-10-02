@@ -10,3 +10,4 @@ type ResourceMonitor interface {
 type Data struct {
     Metrics map[string]string
 }
+
