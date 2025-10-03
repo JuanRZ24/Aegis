@@ -15,12 +15,11 @@ func (d DiskMonitor) Name() string {
 
 func (d DiskMonitor) Collect() monitor.Data {
     usage, err := disk.Usage("/")
-if err != nil || usage == nil {
-    return monitor.Data{Metrics: map[string]string{
-        "Error": fmt.Sprintf("no se pudo obtener disco: %v", err),
-    }}
-}
- // en Windows, partición principal
+    if err != nil || usage == nil {
+        return monitor.Data{Metrics: map[string]string{
+            "Error": fmt.Sprintf("no se pudo leer disco en '/': %v", err),
+        }}
+    }
 
     metrics := make(map[string]string)
     metrics["Total"] = fmt.Sprintf("%.2f GB", float64(usage.Total)/(1024*1024*1024))
@@ -32,11 +31,17 @@ if err != nil || usage == nil {
 }
 
 func (d DiskMonitor) Format(data monitor.Data) string {
+    // Si hubo error en Collect()
+    if errMsg, ok := data.Metrics["Error"]; ok {
+        return fmt.Sprintf("[Disk]\n  %s\n", errMsg)
+    }
+
     percent := 0.0
     fmt.Sscanf(data.Metrics["UsedPercent"], "%f%%", &percent)
     bar := ui.ProgressBar(percent, 20)
-	coloredBar := ui.Colorize(bar,percent)
-	coloredVal := ui.Colorize(data.Metrics["UsedPercent"], percent)
+    coloredBar := ui.Colorize(bar, percent)
+    coloredVal := ui.Colorize(data.Metrics["UsedPercent"], percent)
+
     result := "[Disk]\n"
     result += fmt.Sprintf("  Used: %s (%s) / %s %s\n",
         data.Metrics["Used"],
