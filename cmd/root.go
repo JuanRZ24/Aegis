@@ -13,6 +13,7 @@ import (
     "github.com/JuanRZ24/aegis/internal/disk"
     "github.com/JuanRZ24/aegis/internal/process"
     "github.com/JuanRZ24/aegis/internal/monitor"
+    "github.com/JuanRZ24/aegis/internal/temperature"
 )
 
 var rootCmd = &cobra.Command{
@@ -24,6 +25,8 @@ var rootCmd = &cobra.Command{
             memory.MemoryMonitor{},
             disk.DiskMonitor{},
             process.ProcessMonitor{Limit: 5},
+            temperature.TempMonitor{},
+
         }
 
         for {
