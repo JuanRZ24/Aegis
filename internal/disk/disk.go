@@ -14,7 +14,13 @@ func (d DiskMonitor) Name() string {
 }
 
 func (d DiskMonitor) Collect() monitor.Data {
-    usage, _ := disk.Usage("/") // en Windows, partición principal
+    usage, err := disk.Usage("/")
+if err != nil || usage == nil {
+    return monitor.Data{Metrics: map[string]string{
+        "Error": fmt.Sprintf("no se pudo obtener disco: %v", err),
+    }}
+}
+ // en Windows, partición principal
 
     metrics := make(map[string]string)
     metrics["Total"] = fmt.Sprintf("%.2f GB", float64(usage.Total)/(1024*1024*1024))
