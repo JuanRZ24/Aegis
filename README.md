@@ -6,7 +6,7 @@
 
 - **CPU**: Monitoreo de carga y uso.
 - **Memoria**: Visualización del consumo de RAM.
-- **Disco**: Estado de almacenamiento y particiones.
+- **Disco**: Estado de almacenamiento y particiones.s
 - **Procesos**: Listado de los 5 procesos que más recursos consumen.
 - **Temperatura**: Sensores térmicos del hardware (si están disponibles).
 - **Interfaz Fluida**: Limpieza automática de pantalla cada 2 segundos para una visualización dinámica.
